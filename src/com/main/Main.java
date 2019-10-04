@@ -44,15 +44,10 @@ public class Main {
                         }
                     System.out.println("***************************************");
                     recurtionChecker = new RecurstionFunctionChecker();
-
+                    loopPatternChecker = new LoopPatternChecker();
 
                 }
             }
-
-
-
         }
-
-
     }
 }
