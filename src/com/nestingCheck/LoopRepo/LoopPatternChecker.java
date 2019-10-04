@@ -1,10 +1,8 @@
 package com.nestingCheck.LoopRepo;
 
 import com.nestingCheck.Model.Line;
-import com.nestingCheck.stacks.ConditionStack;
-import com.nestingCheck.stacks.LoopBracketStack;
-import com.nestingCheck.stacks.RecursionBracketStack;
-import org.apache.commons.lang3.StringUtils;
+import com.nestingCheck.RecurtionStacks.ConditionStack;
+import com.nestingCheck.RecurtionStacks.LoopBracketStack;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -71,19 +69,21 @@ public class LoopPatternChecker {
         //recursiveCallIdentifierPattern = Pattern.compile(RECURSIVE_CALL_IDENTIFIER);
     }
 
-    public ArrayList<Line> bracketChecker(String statement){
-        conditionIdentifierMatcher = conditionIdentifierPattern.matcher(statement);
-        while (conditionIdentifierMatcher.find()) {
-            conditionStack.push(conditionIdentifierMatcher.group(1));
-          //  System.out.println(conditionIdentifierMatcher.group(1));
-        }
+    public ArrayList<Line> bracketChecker(ArrayList<Line> st){
+        for(Line statement:st) {
 
 
+            conditionIdentifierMatcher = conditionIdentifierPattern.matcher(statement.getLine());
+            while (conditionIdentifierMatcher.find()) {
+                conditionStack.push(conditionIdentifierMatcher.group(1));
+                //  System.out.println(conditionIdentifierMatcher.group(1));
+            }
 
-        int pushStatusValue = 0;
+
+            int pushStatusValue = 0;
 
             if (singleLoopCall) {
-                if ((statement.replaceAll("\\s", "").charAt(0))=='{') {
+                if ((statement.getLine().replaceAll("\\s", "").charAt(0)) == '{') {
                     loopBracketStack.push("{");
                     pushStatusValue = 0;
                     singleLoopCall = false;
@@ -95,20 +95,20 @@ public class LoopPatternChecker {
             }
 
 
+            callPattern(statement.getLine());
 
-            callPattern(statement);
 
             if (whileIdentifierMatcher.find()) {
-                callPattern(statement);
+                callPattern(statement.getLine());
                 if (whileWithSemicolenIdentifierMatcher.find()) {
-                    callPattern(statement);
+                    callPattern(statement.getLine());
                     while (whileWithSemicolenIdentifierMatcher.find()) {
                         semicolenLoopIdentifire++;
                     }
                 }
 
                 if (whileWithCurlyBracketIdentifierMatcher.find()) {
-                    callPattern(statement);
+                    callPattern(statement.getLine());
                     while (whileWithCurlyBracketIdentifierMatcher.find()) {
                         loopBracketStack.push("{");
                     }
@@ -120,9 +120,9 @@ public class LoopPatternChecker {
             }
 
             if (forIdentifierMatcher.find()) {
-                callPattern(statement);
+                callPattern(statement.getLine());
                 if (forWithSemicolenIdentifierMatcher.find()) {
-                    callPattern(statement);
+                    callPattern(statement.getLine());
                     while (forWithSemicolenIdentifierMatcher.find()) {
                         semicolenLoopIdentifire++;
                     }
@@ -130,7 +130,7 @@ public class LoopPatternChecker {
 
 
                 if (forWithCurlyBracketIdentifierMatcher.find()) {
-                    callPattern(statement);
+                    callPattern(statement.getLine());
                     while (forWithCurlyBracketIdentifierMatcher.find()) {
                         loopBracketStack.push("{");
                     }
@@ -142,23 +142,24 @@ public class LoopPatternChecker {
             }
 
             if (closeCurlyBracketIdentifierMatcher.find()) {
-                callPattern(statement);
-                if(loopBracketStack.size() != 0)
-                while (closeCurlyBracketIdentifierMatcher.find()) {
-                    String value = conditionStack.pop();
-                    if(value.equalsIgnoreCase("while")||value.equalsIgnoreCase("for")) {
-                        loopBracketStack.pop();
+                callPattern(statement.getLine());
+                if (loopBracketStack.size() != 0)
+                    while (closeCurlyBracketIdentifierMatcher.find()) {
+                        String value = conditionStack.pop();
+                        if (value.equalsIgnoreCase("while") || value.equalsIgnoreCase("for")) {
+                            loopBracketStack.pop();
+                        }
                     }
-                }
             }
 
 
-        System.out.println();
-        linesWithValues.add(new Line(statement,loopBracketStack.size()+semicolenLoopIdentifire+pushStatusValue));
-        System.out.println(statement+"::"+(loopBracketStack.size() + semicolenLoopIdentifire + pushStatusValue));
+        //    System.out.println();
+            linesWithValues.add(new Line(statement.getLine(), loopBracketStack.size() + semicolenLoopIdentifire + pushStatusValue+statement.getValue()));
+           // System.out.println(statement.getLine() + "::" + (loopBracketStack.size() + semicolenLoopIdentifire + pushStatusValue+statement.getValue()));
 
-        if(!(semicolenLoopIdentifire>=0)){
-            semicolenLoopIdentifire = 0;
+            if (!(semicolenLoopIdentifire >= 0)) {
+                semicolenLoopIdentifire = 0;
+            }
         }
         return linesWithValues;
     }
