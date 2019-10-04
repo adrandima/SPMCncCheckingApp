@@ -154,8 +154,12 @@ public class LoopPatternChecker {
 
 
         //    System.out.println();
-            linesWithValues.add(new Line(statement.getLine(), loopBracketStack.size() + semicolenLoopIdentifire + pushStatusValue+statement.getValue()));
-           // System.out.println(statement.getLine() + "::" + (loopBracketStack.size() + semicolenLoopIdentifire + pushStatusValue+statement.getValue()));
+            if(statement.getLine().replaceAll("\\s+","").equals("{") || statement.getLine().replaceAll("\\s+","").equals("}") || statement.getLine().replaceAll("\\s+","").equals("")){
+                linesWithValues.add(new Line(statement.getLine(), 0));
+
+            }else {
+                linesWithValues.add(new Line(statement.getLine(), loopBracketStack.size() + semicolenLoopIdentifire + pushStatusValue + statement.getValue()));
+            }// System.out.println(statement.getLine() + "::" + (loopBracketStack.size() + semicolenLoopIdentifire + pushStatusValue+statement.getValue()));
 
             if (!(semicolenLoopIdentifire >= 0)) {
                 semicolenLoopIdentifire = 0;

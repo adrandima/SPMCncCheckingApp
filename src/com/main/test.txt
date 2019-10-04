@@ -1,5 +1,5 @@
 public class FibonacciMain {
-	public long fibonacci(long number) {
+	static long fibonacci(long number) {
 		if((number== 0) || (number== 1)) { // base cases
 			return number;
 		}
